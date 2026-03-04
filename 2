@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background: #05070a; color: #e6edf3; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #display { font-size: 4rem; font-weight: 900; color: #58a6ff; display: none; }
+        button { background: #238636; border: none; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="auth">
+        <input type="password" id="pin" placeholder="PIN 2">
+        <button onclick="activate()">ACTIVATE INTERFACE</button>
+    </div>
+    <div id="display">--%</div>
+
+    <script>
+        const MESH_ID = "stone_relay_777"; 
+
+        async function activate() {
+            if(document.getElementById("pin").value === "2") {
+                document.getElementById("auth").style.display = "none";
+                document.getElementById("display").style.display = "block";
+                
+                setInterval(async () => {
+                    try {
+                        const response = await fetch(`https://kvdb.io/6n8m6n8m6n8m/${MESH_ID}`);
+                        const val = await response.text();
+                        document.getElementById("display").innerText = val + "%";
+                    } catch(e) { console.log("Searching for signal..."); }
+                }, 1000); // Check every 1s
+            }
+        }
+    </script>
+</body>
+</html>
