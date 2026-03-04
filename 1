@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background: #05070a; color: #e6edf3; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        input { background: #161b22; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 5px; text-align: center; }
+        button { background: #1f6feb; border: none; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+        #status { font-size: 10px; color: #8b949e; margin-top: 20px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div id="auth">
+        <input type="password" id="pin" placeholder="PIN 1">
+        <button onclick="activate()">ACTIVATE SOURCE</button>
+    </div>
+    <div id="status">OFFLINE</div>
+
+    <script>
+        const MESH_ID = "stone_relay_777"; // Change this to a unique string for your private room
+
+        async function activate() {
+            if(document.getElementById("pin").value === "1") {
+                document.getElementById("auth").style.display = "none";
+                document.getElementById("status").innerText = "BROADCASTING TO CLOUD...";
+                
+                setInterval(async () => {
+                    const val = (Math.random() * 100).toFixed(2);
+                    // Pushing to the Cloud Relay
+                    try {
+                        await fetch(`https://kvdb.io/6n8m6n8m6n8m/${MESH_ID}`, {
+                            method: 'POST',
+                            body: val
+                        });
+                    } catch(e) { console.error("Signal lost"); }
+                }, 1500); // 1.5s interval for free-tier stability
+            }
+        }
+    </script>
+</body>
+</html>
