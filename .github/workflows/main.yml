@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stone Network Receiver</title>
+    <style>
+        body { background: #05070a; color: #e6edf3; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #output {
+            font-size: 2.5rem;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 250px;
+        }
+        #status-bar { font-size: 10px; color: #444; margin-top: 15px; letter-spacing: 2px; }
+        .pulse { box-shadow: 0 0 30px rgba(0, 255, 204, 0.4) !important; }
+    </style>
+</head>
+<body>
+    <div id="output">INITIATING...</div>
+    <div id="status-bar">SYNCING WITH STONE CLOUD</div>
+
+    <script>
+        const BUCKET = "6n8m6n8m6n8m";
+        const KEY = "stone_network_data";
+        const outputDiv = document.getElementById("output");
+
+        async function pullData() {
+            try {
+                // Fetch with cache-buster
+                const res = await fetch(`https://kvdb.io/${BUCKET}/${KEY}?t=${Date.now()}`);
+                if (res.ok) {
+                    const val = await res.text();
+                   
+                    // Update content
+                    outputDiv.innerText = val || "NO DATA";
+                   
+                    // Visual "Heartbeat" pulse
+                    outputDiv.classList.add("pulse");
+                    setTimeout(() => outputDiv.classList.remove("pulse"), 500);
+                   
+                    document.getElementById("status-bar").innerText = "SIGNAL STABLE: " + new Date().toLocaleTimeString();
+                }
+            } catch(e) {
+                document.getElementById("status-bar").innerText = "SEARCHING FOR UPLINK...";
+            }
+        }
+
+        // Check the cloud mailbox every 2 seconds
+        setInterval(pullData, 2000);
+    </script>
+</body>
+</html>
